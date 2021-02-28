@@ -1,0 +1,23 @@
+- margin: 10
+- title: Ticket — Keer Tröch II
+- margin: 10
+- subtitle: Personenfähre zwischen Bislich & Xanten
+- margin: 5
+- margin: 1
+  hbar: True
+- qrcode: '{"uuid": "395240c2-485a-483f-b9cb-376a4195a9fb", "sum": 300}'
+- margin: 1
+  hbar: True
+- margin: 5
+- table:
+    columns:
+        - Ticket-Typ
+        - Preis
+        - Anzahl
+        - Summe
+    values:
+        -
+            - "Fahrrad nur Hinfahrt"
+            - "2,00 €"
+            - 2
+            - "4,00 €"
