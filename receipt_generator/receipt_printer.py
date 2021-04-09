@@ -153,7 +153,7 @@ class TableElement(StyleElement):
         for x in range(len(self.columns) - 1):
             xs.append(xs[x] + col_widths[x] + spacing)
 
-        # poistions for vertical separation lines
+        # positions for vertical separation lines
         separator_xs = [x - spacing / 2 for x in xs[1:]]
 
         for x, width, col in zip(xs, col_widths, self.columns):
