@@ -27,6 +27,7 @@ class Receipt:
         self.height = 0
         self.elements = []
         self.font_name = "Oxygen-Sans"
+        self.font_name_bold = "Oxygen-Sans-Bold"
         self.mono_font_name = "Oxygen Mono"
         self.y = 0
 
@@ -55,6 +56,7 @@ class Receipt:
                     'qrcode': QRCodeElement,
                     'table': TableElement,
                     'picture': PictureElement,
+                    'tickets': TicketsElement,
                 }[element_type](element_value, **element)
             )
         return rec.render()
@@ -113,7 +115,7 @@ class SubtitleElement(StyleElement):
         self.height = 35
         self.i = Image.new(mode="L", size=(self.width, self.height), color=255)
         self.c = ImageDraw.ImageDraw(self.i)
-        self.f = ImageFont.truetype(font=self.font_name, size=28)
+        self.f = ImageFont.truetype(font=self.font_name_bold, size=28)
         text_size = self.c.textsize(text=text, font=self.f)
         self.c.text(xy=(abs(text_size[0] - self.width) // 2, 0), text=text, font=self.f)
 
@@ -121,10 +123,10 @@ class SubtitleElement(StyleElement):
 class TitleElement(StyleElement):
     def __init__(self, text=None, **kwargs):
         super().__init__(**kwargs)
-        self.height = 45
+        self.height = 50
         self.i = Image.new(mode="L", size=(self.width, self.height), color=255)
         self.c = ImageDraw.ImageDraw(self.i)
-        self.f = ImageFont.truetype(font=self.font_name, size=36)
+        self.f = ImageFont.truetype(font=self.font_name_bold, size=36)
         text_size = self.c.textsize(text=text, font=self.f)
         self.c.text(xy=(abs(text_size[0] - self.width) // 2, 0), text=text, font=self.f)
 
@@ -164,6 +166,63 @@ class TableElement(StyleElement):
 
         # horizontal separation line
         self.c.line(((0, 27), (self.width, 27)), fill=0, width=2)
+
+
+class TicketsElement(StyleElement):
+    def __init__(self, data=None, **kwargs):
+        super().__init__(**kwargs)
+        self.return_trip = data['return']
+        self.values = data['positions']
+        self.sum = data['sum']
+
+        self.height = 38 + len(self.values) * (27 * 2) + (7 * len(self.values) - 1) + 40
+
+        self.i = Image.new(mode="L", size=(self.width, self.height), color=255)
+        self.c = ImageDraw.ImageDraw(self.i)
+        self.f = ImageFont.truetype(font=self.font_name, size=21)
+        self.b = ImageFont.truetype(font=self.font_name_bold, size=25)
+
+        y = 0
+        self.c.text(xy=(0, y), text='Tickets', font=self.b)
+        self.c.text(
+            xy=(self.width - self.c.textsize(text='inkl. Rückfahrt', font=self.b)[0], y),
+            text='inkl. Rückfahrt', font=self.b
+        )
+        y += 33
+        self.c.line(((0, y), (self.width, y)), fill=0, width=2)
+        y += 4
+        self.c.line(((0, y), (self.width, y)), fill=0, width=2)
+        y = 38
+        for ind, position in enumerate(self.values):
+            self.c.text(xy=(0, y), text=position['title'], font=self.f)
+            text = str(position['count']) + ' × ' + position['single_fare']
+            self.c.text(
+                xy=(self.width - self.c.textsize(text=text, font=self.f)[0], y),
+                text=text, font=self.f
+            )
+            y += 27
+
+            self.c.text(xy=(0, y), text=position['subtitle'], font=self.f)
+            text = 'Summe: ' + position['sum']
+            self.c.text(
+                xy=(self.width - self.c.textsize(text=text, font=self.f)[0], y),
+                text=text, font=self.f
+            )
+            y += 27
+
+            if ind < len(self.values) - 1:
+                self.c.line(((0, y), (self.width, y)), fill=0, width=2)
+                y += 7
+        y += 3
+        self.c.line(((0, y), (self.width, y)), fill=0, width=2)
+        y += 4
+        self.c.line(((0, y), (self.width, y)), fill=0, width=2)
+        y += 5
+        text = 'Summe: ' + self.sum
+        self.c.text(
+            xy=(self.width - self.c.textsize(text=text, font=self.b)[0], y),
+            text=text, font=self.b
+        )
 
 
 class PictureElement(StyleElement):
