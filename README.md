@@ -1,7 +1,7 @@
 # FerryTix Receipt Generator
 Generate receipts for ticket sales with the Python Imaging Library (Pillow).
 
-# Example
+### Example
 To generate a FerryTix receipt for a simple ticket with return journey, use the following code:
 ```python3
 from receipt_generator import ReceiptPrinter
@@ -85,3 +85,6 @@ from receipt_generator import ReceiptPrinter
 printer = ReceiptPrinter()
 printer.print_stream('receipt.yaml')
 ```
+
+### Example Output
+![Example receipt generated from source](./example.png)
